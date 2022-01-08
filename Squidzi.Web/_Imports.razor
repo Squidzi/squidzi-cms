@@ -1,0 +1,25 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Squidzi.Web
+@using Squidzi.Web.Shared
+
+@using Squidzi.Models.CMS
+@using Squidzi.Models.ServiceModels
+@using Squidzi.Models.JavascriptModels
+@using Squidzi.Services.CMS.Contracts
+@using Squidzi.Services.Email.Contracts
+@using Squidzi.Services.Managers.Contracts
+
+@using Newtonsoft.Json
+@using System.Text
+
+@using Squidzi.Web.Components
+
+@*@inject NavigationManager _navigationManager*@
+@inject IJSRuntime JsRuntime
+@inject IMetaTagsManager MetaTagsManager

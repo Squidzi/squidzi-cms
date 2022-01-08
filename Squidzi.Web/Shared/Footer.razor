@@ -1,0 +1,66 @@
+﻿@inject ICMSService CMS
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <ul class="list-inline text-center">
+                    @if (!string.IsNullOrEmpty(ViewModel.LinkTwitter))
+                    {
+                        <li class="list-inline-item">
+                            <a href="@ViewModel.LinkTwitter" target="_blank">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(ViewModel.LinkFacebook))
+                    {
+                        <li class="list-inline-item" target="_blank">
+                            <a href="@ViewModel.LinkFacebook">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(ViewModel.LinkGithub))
+                    {
+                        <li class="list-inline-item" target="_blank">
+                            <a href="@ViewModel.LinkGithub">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(ViewModel.LinkLinkedIn))
+                    {
+                        <li class="list-inline-item" target="_blank">
+                            <a href="@ViewModel.LinkLinkedIn">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; @ViewModel.SiteName @DateTime.Now.Year</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+@functions {
+    Global ViewModel { get; set; } = new Global();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel = await CMS.GetGlobal();
+    }
+}

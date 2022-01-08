@@ -1,0 +1,117 @@
+﻿@page "/"
+@inject ICMSService CMS
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('@ViewModel.ImageHeader')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>@ViewModel.Heading</h1>
+                    <span class="subheading">@ViewModel.Subheading</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            @foreach (var post in Posts.OrderByDescending(p => p.PublishedDate))
+            {
+                <div class="post-preview">
+                    <a href="/post/@post.Slug">
+                        <h2 class="post-title">
+                            @post.Title
+                        </h2>
+                        <h3 class="post-subtitle">
+                            @post.Subtitle
+                        </h3>
+                    </a>
+                    @if (post.Tags.Any())
+                    {
+                        <span class="meta mb-2">
+                            @foreach (var tag in post.Tags)
+                            {
+                                <a href="/search-tag/@tag" class="badge badge-secondary">@tag</a>
+                            }
+                        </span>
+                    }
+                    <p class="post-meta">
+                        Posted by
+                        <a href="@post.Author.Link">
+                            @post.Author.Name
+                        </a>
+                        on @post.PublishedDate.ToString("MMMM dd, yyyy")
+                    </p>
+                </div>
+                <hr>
+            }
+            @if (showMorePosts)
+            {
+                <div class="clearfix">
+                    <button @onclick="@LoadMorePosts" class="btn btn-primary float-right" href="#">Older Posts &rarr;</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    Models.CMS.Pages.PageIndex ViewModel { get; set; } = new Models.CMS.Pages.PageIndex();
+    List<BlogPost> Posts { get; set; } = new List<BlogPost>();
+    List<TagCloudItem> TagCloudItems { get; set; } = new List<TagCloudItem>();
+
+    const int defaultPostIncrement = 4;
+    int totalPostsCount = 0;
+    bool showMorePosts = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel = await CMS.GetPage_Index();
+        Posts = await LoadPosts();
+
+        CheckForMorePosts();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await MetaTagsManager.SetMetaTags(new SetMetaTagsRequest()
+        {
+            Title = "Calamari Blog",
+            Description = ViewModel.Subheading,
+            Image = ViewModel.ImageHeader
+        });
+    }
+
+    private async Task<List<BlogPost>> LoadPosts()
+    {
+        var postCount = Posts.Count;
+        var posts = await CMS.GetBlogPosts();
+        totalPostsCount = posts.Count;
+
+        posts = posts.OrderByDescending(p => p.PublishedDate).Take(defaultPostIncrement + postCount).ToList();
+
+        return posts;
+    }
+
+    private async Task LoadMorePosts()
+    {
+        Posts = await LoadPosts();
+        CheckForMorePosts();
+    }
+
+    private void CheckForMorePosts()
+    {
+        if (Posts.Count == totalPostsCount)
+        {
+            showMorePosts = false;
+        }
+        else
+        {
+            showMorePosts = true;
+        }
+    }
+}

@@ -1,0 +1,28 @@
+﻿@inject IJSRuntime JsRuntime
+@inject Microsoft.Extensions.Options.IOptions<Squidzi.Infrastructure.Configuration.DisqusSettings> disqusConfig
+
+<div id="disqus_thread"></div>
+
+@code {
+    [Parameter]
+    public string Slug { get; set; }
+
+    public class DisqusConfig
+    {
+        public string EmbedJsUrl { get; set; }
+
+        public string PageIdentifier { get; set; }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var response = await JsRuntime.InvokeAsync<string>("InitialiseDisqus", new DisqusConfig()
+            {
+                EmbedJsUrl = disqusConfig.Value.EmbedJsUrl,
+                PageIdentifier = Slug
+            });
+        }
+    }
+}
